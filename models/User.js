@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt, { hash, genSalt, compare } from "bcryptjs";
+import  { hash, genSalt, compare } from "bcryptjs";
 const userSchema = new mongoose.Schema(
   {
     name: {

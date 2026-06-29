@@ -2,10 +2,14 @@ import express from "express";
 import { createProduct, deleteProduct, getProducts, updateProduct } from "../controllers/productController.js";
 
 import { protect, admin } from "../middleware/authMiddleware.js";
-
 const router = express.Router();
 
-router.route('/', protect, admin).get(getProducts).post(createProduct)
+// AFTER (correct — middleware runs properly)
+router.route('/')
+  .get(protect, getProducts)          // anyone logged in can view
+  .post(protect, admin, createProduct) // only admin can create
 
-router.route('/:id', protect,  admin,).put(updateProduct).delete(deleteProduct)
+router.route('/:id')
+  .put(protect, admin, updateProduct)    // only admin can update
+  .delete(protect, admin, deleteProduct) // only admin can delete
 export default router

@@ -8,11 +8,11 @@ export const protect = async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-      token = req.headers.authorization.split(" ")[1];
+      token = req.headers.authorization.split(" ")[1]; // Splitting the token 
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // decode the token form secret code
 
-      req.user = await User.findById(decoded.id).select("-password");
+      req.user = await User.findById(decoded.id).select("-password"); // find the password value  that user 
 
       next();
     } catch (error) {
