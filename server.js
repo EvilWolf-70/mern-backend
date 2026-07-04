@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import User from "./models/User.js";
 import authRoutes from './routes/authRoutes.js'
 import productRoutes from './routes/productRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
 dotenv.config();
 
 const app = express();
@@ -39,6 +40,7 @@ app.get("/api/users", async (req, res) => {
 //Routes
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
+app.use('/api/orders', orderRoutes)
 
 app.listen(PORT, () => {
   console.log(`server is running  http://localhost:${PORT}/`);

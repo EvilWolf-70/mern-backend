@@ -6,7 +6,7 @@ const router = express.Router();
 
 // AFTER (correct — middleware runs properly)
 router.route('/')
-  .get(protect, getProducts)          // anyone logged in can view
+  .get( getProducts)          // anyone logged in can view
   .post(protect, admin, createProduct) // only admin can create
 
 router.route('/:id')
