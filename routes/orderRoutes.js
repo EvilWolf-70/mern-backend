@@ -12,13 +12,15 @@ import { protect, admin } from "../middleware/authMiddleware.js";
 
   const router = express.Router();
 
-router.post("/", protect, createOrder);
+router.route("/")
+.post(protect, createOrder)
+.get(protect, admin,getAllOrders);
 
-router.get("/ ", protect, getMyOrders);
+
+router.get("/myorders", protect, getMyOrders);
+
 
 router.get("/:id", protect, getOrderById);
-
-router.get("/", protect, admin, getAllOrders);
 
 router.put("/:id/status", protect, admin, updateOrderStatus);
 
