@@ -5,10 +5,11 @@ import User from "./models/User.js";
 import authRoutes from './routes/authRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
+import cors from 'cors'
 dotenv.config();
 
 const app = express();
-
+app.use(cors())
 // MiddleWare
 app.use(express.json());
 
