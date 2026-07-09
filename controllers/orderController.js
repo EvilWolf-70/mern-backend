@@ -66,12 +66,11 @@ export const getMyOrders = async (req, res) => {
     }
 };
 
-// Get Single Order
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate(
       "user",
-      "name email",
+      "name email"
     );
 
     if (!order) {
@@ -81,7 +80,7 @@ export const getOrderById = async (req, res) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       order,
     });
@@ -96,6 +95,8 @@ export const getOrderById = async (req, res) => {
 // Update Order Status
 export const updateOrderStatus = async (req, res) => {
   try {
+    const { orderStatus } = req.body;
+
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -105,17 +106,21 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
 
-    order.orderStatus = req.body.status;
+    order.orderStatus = orderStatus;
 
-    if (req.body.status === "Delivered") {
+    if (orderStatus === "Delivered") {
       order.isDelivered = true;
-      order.deliveredAt = Date.now();
+      order.deliveredAt = new Date();
+    } else {
+      order.isDelivered = false;
+      order.deliveredAt = null;
     }
 
     await order.save();
 
-    res.json({
+    res.status(200).json({
       success: true,
+      message: "Order status updated successfully",
       order,
     });
   } catch (error) {
