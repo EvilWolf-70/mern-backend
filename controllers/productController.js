@@ -29,7 +29,10 @@ export const createProduct = async (req, res) => {
     });
 
     const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
+    res.status(201).json({
+      success: true,
+      product: createdProduct,
+    });
 
     // const existProduct = await Product.findById();
 
@@ -94,7 +97,7 @@ export const deleteProduct = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({
-        message: error.message
-    })
+      message: error.message,
+    });
   }
 };
