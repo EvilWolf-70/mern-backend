@@ -1,80 +1,72 @@
 import User from "../models/User.js";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 import transporter from "../config/mail.js";
 // @desc Register user
 // @route POST /api/auth/register
 
-const genrateToken = (id) =>{
-    return jwt.sign({id}, process.env.JWT_SECRET, {
-        expiresIn : "30d"
-    })
-}
+const genrateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, isAdmin } = req.body;
 
     const userExists = await User.findOne({ email });
-    if(userExists){
-        return res.status(400).json({message:`User already exists`})
+    if (userExists) {
+      return res.status(400).json({ message: `User already exists` });
     }
     const user = await User.create({
-        name,
-        email,
-        password,
-        isAdmin
+      name,
+      email,
+      password,
+      isAdmin,
     });
-    if(user){
-        res.status(201).json({
-            _id:user._id,
-            name:user.name,
-            email:user.email, 
-            isAdmin:user.isAdmin,
-            token:genrateToken(user._id),
-
-        })
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        token: genrateToken(user._id),
+      });
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
     }
-    else{
-      res.status(400).json({message:'Invalid user data'})
-    }
-
   } catch (error) {
-    res.status(400).json({message:error.message})
+    res.status(400).json({ message: error.message });
   }
 };
-
 
 // @desc Logib user
 // @route POST /api/auth/login
 
-export const loginUser = async (req, res) =>{
-
+export const loginUser = async (req, res) => {
   try {
-        const {  email, password } = req.body;
+    const { email, password } = req.body;
 
-        const user = await User.findOne( { email } );
+    const user = await User.findOne({ email });
 
-        if(user && await user.matchPassword(password)){
-          res.status(201).json({
-             _id:user._id, 
-                name:user.name, 
-                email:user.email, 
-                isAdmin:user.isAdmin, 
-                token:genrateToken(user._id), 
-          })
-        }
-        else{
-          res.status(401).json({message:`Invalid email or password`})
-        }
-    
+    if (user && (await user.matchPassword(password))) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        token: genrateToken(user._id),
+      });
+    } else {
+      res.status(401).json({ message: `Invalid email or password` });
+    }
   } catch (error) {
-        res.status(500).json({message:error.message})
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
-
-// @desc forgot-password 
+// @desc forgot-password
 // @route POST /api/auth/forgot-password
 
 export const forgotPassword = async (req, res) => {
@@ -90,13 +82,11 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "15m",
+    });
 
-    const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
+        const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -137,19 +127,15 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-
 export const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findByIdAndUpdate(decoded.userId, {
+    await User.findByIdAndUpdate(decoded.Id, {
       password: hashedPassword,
     });
 
