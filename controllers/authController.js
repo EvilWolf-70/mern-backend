@@ -83,7 +83,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "15m",
+      expiresIn: "5m",
     });
 
         const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
@@ -111,7 +111,7 @@ export const forgotPassword = async (req, res) => {
            Reset Password
         </a>
 
-        <p>This link expires in 15 minutes.</p>
+        <p>This link expires in 1 minutes.</p>
       `,
     });
 
@@ -132,10 +132,10 @@ export const resetPassword = async (req, res) => {
     const { token, password } = req.body;
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findByIdAndUpdate(decoded.Id, {
+    await User.findByIdAndUpdate(decoded.id, {
       password: hashedPassword,
     });
 
